@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gold & Silver Price Calculator</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f4f4; /* Fixed neutral background */
+    }
+    .container {
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        transition: all 0.5s ease;
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.6rem;
+    }
+    label {
+        display: block;
+        margin-top: 12px;
+        font-weight: bold;
+        font-size: 0.95rem;
+    }
+    input, select {
+        width: 100%;
+        padding: 12px;
+        margin-top: 6px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        background: #fff;
+    }
+    .row {
+        display: flex;
+        gap: 10px;
+    }
+    .row > div {
+        flex: 1;
+    }
+    .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1rem;
+    }
+    .result strong {
+        display: block;
+        margin-top: 5px;
+    }
+    hr {
+        border: none;
+        height: 1px;
+        background: rgba(0,0,0,0.1);
+        margin: 10px 0;
+    }
+
+    /* Gold Theme */
+    .gold-theme {
+        background: #fffbea;
+        border: 2px solid #daa520;
+    }
+    .gold-theme h2 {
+        color: #b8860b;
+    }
+    .gold-theme input, 
+    .gold-theme select {
+        border-color: #daa520;
+    }
+    .gold-theme .result {
+        background: #fff5c4;
+        border: 1px solid #f0e68c;
+    }
+
+    /* Silver Theme */
+    .silver-theme {
+        background: #f9f9f9;
+        border: 2px solid #a9a9a9;
+    }
+    .silver-theme h2 {
+        color: #555;
+    }
+    .silver-theme input, 
+    .silver-theme select {
+        border-color: #a9a9a9;
+    }
+    .silver-theme .result {
+        background: #e7e7e7;
+        border: 1px solid #d3d3d3;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+        .container {
+            margin: 10px;
+            padding: 15px;
+        }
+        h2 {
+            font-size: 1.4rem;
+        }
+        .row {
+            flex-direction: column;
+        }
+        input, select {
+            font-size: 1.05rem;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div id="calcContainer" class="container gold-theme">
+    <h2>Gold & Silver Price Calculator</h2>
+
+    <label>Metal Type</label>
+    <select id="metalType" onchange="changeTheme(); calculate();">
+        <option value="Gold">Gold</option>
+        <option value="Silver">Silver</option>
+    </select>
+
+    <div class="row">
+        <div>
+            <label>Rate per Gram (₹)</label>
+            <input type="number" id="ratePerGram" oninput="calculate()" placeholder="Enter rate">
+        </div>
+        <div>
+            <label>Weight (grams)</label>
+            <input type="number" id="weight" oninput="calculate()" placeholder="Enter weight">
+        </div>
+    </div>
+
+    <label>Making Charge Type</label>
+    <select id="makingType" onchange="calculate()">
+        <option value="percent">Percentage (%)</option>
+        <option value="perGram">₹ Per Gram</option>
+    </select>
+
+    <label>Making Charge</label>
+    <input type="number" id="makingCharge" oninput="calculate()" placeholder="Enter making charge">
+
+    <div class="result">
+        <strong>Metal Value: ₹<span id="metalValue">0</span></strong>
+        <strong>Making Charges: ₹<span id="makingValue">0</span></strong>
+        <strong>GST (3%): ₹<span id="gstValue">0</span></strong>
+        <hr>
+        <strong>Total Price: ₹<span id="totalValue">0</span></strong>
+    </div>
+</div>
+
+<script>
+function calculate() {
+    let rate = parseFloat(document.getElementById("ratePerGram").value) || 0;
+    let weight = parseFloat(document.getElementById("weight").value) || 0;
+    let makingType = document.getElementById("makingType").value;
+    let makingCharge = parseFloat(document.getElementById("makingCharge").value) || 0;
+
+    let metalValue = rate * weight;
+    let makingValue = (makingType === "percent") ? (metalValue * makingCharge) / 100 : makingCharge * weight;
+    let subtotal = metalValue + makingValue;
+    let gst = subtotal * 0.03;
+    let total = subtotal + gst;
+
+    document.getElementById("metalValue").textContent = metalValue.toFixed(2);
+    document.getElementById("makingValue").textContent = makingValue.toFixed(2);
+    document.getElementById("gstValue").textContent = gst.toFixed(2);
+    document.getElementById("totalValue").textContent = total.toFixed(2);
+}
+
+function changeTheme() {
+    let metalType = document.getElementById("metalType").value;
+    let container = document.getElementById("calcContainer");
+    container.classList.remove("gold-theme", "silver-theme");
+    if (metalType === "Gold") {
+        container.classList.add("gold-theme");
+    } else {
+        container.classList.add("silver-theme");
+    }
+}
+
+calculate();
+</script>
+
+</body>
+</html>
